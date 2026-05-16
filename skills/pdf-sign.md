@@ -32,10 +32,8 @@ Overlay a visual signature image onto a PDF file.
    ```bash
    python -c "import fitz" 2>&1
    ```
-   If missing, install it:
-   ```bash
-   pip install pymupdf
-   ```
+   If missing, ask the user: "pymupdf is not installed. Can I install it now with `pip install pymupdf`?"
+   Only install if the user confirms. If they decline, stop and let them know they can install it manually and retry.
 
 5. **Ask the user for placement details** (unless they already specified):
    - Which page? (default: last page)
