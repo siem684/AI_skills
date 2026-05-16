@@ -1,6 +1,6 @@
 # PDF Sign
 
-Overlay a visual signature image onto a PDF file. The signature image is stored as a skill asset alongside this skill file and reused across all future invocations.
+Overlay a visual signature image onto a PDF file. The signature image is stored as a skill asset in this skill's own folder and reused across all future invocations.
 
 ## Usage
 
@@ -14,24 +14,18 @@ Overlay a visual signature image onto a PDF file. The signature image is stored 
 
 ## Skill asset
 
-The signature image is stored at:
-- **Windows:** `%USERPROFILE%\.claude\commands\pdf-sign.signature.png`
-- **macOS/Linux:** `~/.claude/commands/pdf-sign.signature.png`
-
-This location is always used — the skill never looks in the PDF directory or the working directory.
+The signature image is stored at `${CLAUDE_SKILL_DIR}/signature.png` — inside this skill's own folder, alongside this skill file.
 
 ## Steps
 
-1. **Determine the skill asset path.**
-   - On Windows: `$env:USERPROFILE\.claude\commands\pdf-sign.signature.png`
-   - On macOS/Linux: `~/.claude/commands/pdf-sign.signature.png`
+1. **Resolve the signature asset path** as `${CLAUDE_SKILL_DIR}/signature.png`.
 
-2. **Handle `--update-signature` flag.** If `$ARGUMENTS` is `--update-signature`, skip to step 8 (signature registration) instead of signing a PDF.
+2. **Handle `--update-signature` flag.** If `$ARGUMENTS` is `--update-signature`, skip to step 8 (signature registration).
 
 3. **Parse the PDF path** from `$ARGUMENTS`.
 
 4. **Check for stored signature asset.**
-   Check whether the skill asset file exists. If it does not exist, tell the user:
+   Check whether `${CLAUDE_SKILL_DIR}/signature.png` exists. If it does not, tell the user:
    > "No signature found. Please provide a path to your signature image (PNG with transparent background works best) and I'll store it for future use."
    Then go to step 8 to register it before continuing.
 
@@ -58,10 +52,9 @@ This location is always used — the skill never looks in the PDF directory or t
 
 ```python
 import fitz  # pymupdf
-import os
 
 pdf_path = "<resolved-pdf-path>"
-sig_path = "<skill-asset-path>"
+sig_path = "<CLAUDE_SKILL_DIR>/signature.png"
 output_path = pdf_path.replace(".pdf", "_signed.pdf")
 
 page_index = -1        # -1 = last page
@@ -103,9 +96,9 @@ print(f"Saved: {output_path}")
    Ask the user to provide the path to their signature image file. Then copy it to the skill asset path, overwriting any existing file:
    ```bash
    # Windows
-   copy "<provided-path>" "$env:USERPROFILE\.claude\commands\pdf-sign.signature.png"
+   copy "<provided-path>" "${CLAUDE_SKILL_DIR}\signature.png"
    # macOS/Linux
-   cp "<provided-path>" "~/.claude/commands/pdf-sign.signature.png"
+   cp "<provided-path>" "${CLAUDE_SKILL_DIR}/signature.png"
    ```
    Confirm to the user: "Signature saved. It will be used for all future `/pdf-sign` calls."
    If this was triggered by a missing signature during a sign request (step 4), continue to step 5 after saving.
