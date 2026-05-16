@@ -20,7 +20,15 @@ Overlay a visual signature image onto a PDF file.
    - Current working directory: `signature.png`
    If still not found, ask the user to provide a path to their signature image.
 
-3. **Check dependencies.** Verify `pymupdf` is installed:
+3. **Check Python is available.**
+   ```bash
+   python --version 2>&1
+   ```
+   If the command is not found or returns an error, stop immediately and tell the user:
+   > "This skill requires Python. Please install it from https://python.org and make sure it's on your PATH, then try again."
+   Do not proceed further.
+
+4. **Check dependencies.** Verify `pymupdf` is installed:
    ```bash
    python -c "import fitz" 2>&1
    ```
@@ -29,12 +37,12 @@ Overlay a visual signature image onto a PDF file.
    pip install pymupdf
    ```
 
-4. **Ask the user for placement details** (unless they already specified):
+5. **Ask the user for placement details** (unless they already specified):
    - Which page? (default: last page)
    - Position: bottom-right, bottom-left, bottom-center, or custom x/y coordinates
    - Size: small (25% page width), medium (35%), large (50%), or custom width in points
 
-5. **Generate and run a Python script** to apply the signature overlay. Use this pattern:
+6. **Generate and run a Python script** to apply the signature overlay. Use this pattern:
 
 ```python
 import fitz  # pymupdf
@@ -86,7 +94,7 @@ print(f"Saved: {output_path}")
 
    Adapt the script based on the user's actual choices before running it.
 
-6. **Report the result.** Tell the user the output file path. If the output looks wrong (e.g. the image has wrong aspect ratio or unexpected placement), offer to re-run with adjusted parameters.
+7. **Report the result.** Tell the user the output file path. If the output looks wrong (e.g. the image has wrong aspect ratio or unexpected placement), offer to re-run with adjusted parameters.
 
 ## Notes
 
